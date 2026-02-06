@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конструктор хендбуков</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="modal" id="start-modal" style="display: flex;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <div class="modal-title">Создание нового хендбука</div>
+            </div>
+            
+            <div class="start-options">
+                <div class="start-option active" id="option-blank">
+                    <div class="option-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="option-title">С чистого листа</div>
+                    <div class="option-desc">Создайте хендбук с нуля, полностью настроив все элементы</div>
+                </div>
+                
+                <div class="start-option" id="option-template">
+                    <div class="option-icon">
+                        <i class="fas fa-copy"></i>
+                    </div>
+                    <div class="option-title">Из шаблона</div>
+                    <div class="option-desc">Выберите готовый шаблон и настройте его под свои нужды</div>
+                </div>
+                
+                <div class="start-option" id="option-import">
+                    <div class="option-icon">
+                        <i class="fas fa-file-import"></i>
+                    </div>
+                    <div class="option-title">Импортировать</div>
+                    <div class="option-desc">Загрузите существующий хендбук для редактирования</div>
+                </div>
+            </div>
+            
+            <!-- Шаблоны (скрыто по умолчанию) -->
+            <div id="templates-container" style="display: none; margin-top: 20px;">
+                <div class="section-title" style="margin-bottom: 15px;">
+                    <i class="fas fa-th-large"></i> Выберите шаблон
+                </div>
+                
+                <div class="templates-grid">
+                    <div class="template-card" data-template="programming">
+                        <div class="template-preview" style="background: linear-gradient(135deg, #2F80ED, #9B51E0);">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="template-name">Программирование</div>
+                        <div class="template-desc">Основы разработки ПО</div>
+                    </div>
+                    
+                    <div class="template-card" data-template="design">
+                        <div class="template-preview" style="background: linear-gradient(135deg, #F2994A, #EB5757);">
+                            <i class="fas fa-paint-brush"></i>
+                        </div>
+                        <div class="template-name">Дизайн</div>
+                        <div class="template-desc">UI/UX и графический дизайн</div>
+                    </div>
+                    
+                    <div class="template-card" data-template="language">
+                        <div class="template-preview" style="background: linear-gradient(135deg, #27AE60, #2D9CDB);">
+                            <i class="fas fa-language"></i>
+                        </div>
+                        <div class="template-name">Иностранный язык</div>
+                        <div class="template-desc">Изучение языков</div>
+                    </div>
+                    
+                    <div class="template-card" data-template="business">
+                        <div class="template-preview" style="background: linear-gradient(135deg, #2F80ED, #56CCF2);">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="template-name">Бизнес</div>
+                        <div class="template-desc">Основы предпринимательства</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Импорт (скрыто по умолчанию) -->
+            <div id="import-container" style="display: none; margin-top: 20px;">
+                <div class="section-title" style="margin-bottom: 15px;">
+                    <i class="fas fa-file-import"></i> Импорт хендбука
+                </div>
+                
+                <div class="import-options">
+                    <div class="import-option" id="import-json">
+                        <div class="import-icon">
+                            <i class="fas fa-file-code"></i>
+                        </div>
+                        <div class="import-title">JSON файл</div>
+                        <div class="import-desc">Загрузите ранее сохранённый хендбук</div>
+                        <input type="file" id="json-file" accept=".json" style="display: none;">
+                    </div>
+                    
+                    <div class="import-option" id="import-text">
+                        <div class="import-icon">
+                            <i class="fas fa-paste"></i>
+                        </div>
+                        <div class="import-title">Вставить текст</div>
+                        <div class="import-desc">Вставьте структурированный текст</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancel-start">
+                    <i class="fas fa-times"></i> Отмена
+                </button>
+                <button class="btn" id="start-creating">
+                    <i class="fas fa-rocket"></i> Начать создание
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной интерфейс конструктора (изначально скрыт) -->
+    <div class="container" id="main-interface" style="display: none;">
+        <!-- Сайдбар конструктора -->
+        <div class="constructor-sidebar">
+            <div class="sidebar-header">
+                <div class="logo">H</div>
+                <h1>Конструктор хендбуков</h1>
+                <button class="btn-icon" id="new-handbook-btn" title="Создать новый хендбук">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="section-title">
+                    <i class="fas fa-book"></i> Основные настройки
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Название хендбука</label>
+                    <input type="text" id="handbook-title" placeholder="Введите название">
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Подзаголовок</label>
+                    <input type="text" id="handbook-subtitle" placeholder="Введите подзаголовок">
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Автор</label>
+                    <input type="text" id="handbook-author" placeholder="Ваше имя">
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Цветовая тема</label>
+                    <div class="color-picker-container">
+                        <div class="color-preview" id="color-preview"></div>
+                        <input type="color" id="primary-color" value="#2F80ED">
+                        <input type="color" id="secondary-color" value="#6FCF97" style="margin-left: 10px;">
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Обложка</label>
+                    <div class="cover-options">
+                        <div class="cover-option active" data-cover="gradient">
+                            <i class="fas fa-palette"></i> Градиент
+                        </div>
+                        <div class="cover-option" data-cover="pattern">
+                            <i class="fas fa-th-large"></i> Паттерн
+                        </div>
+                        <div class="cover-option" data-cover="image">
+                            <i class="fas fa-image"></i> Изображение
+                        </div>
+                    </div>
+                    <input type="file" id="cover-image" accept="image/*" style="display: none;">
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <div class="sidebar-section">
+                <div class="section-title">
+                    <i class="fas fa-layer-group"></i> Структура
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Главы</label>
+                    <div id="chapters-list" class="chapters-list">
+                        <!-- Главы будут добавляться динамически -->
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn btn-small" id="add-chapter-btn">
+                            <i class="fas fa-plus"></i> Добавить главу
+                        </button>
+                        <button class="btn btn-small btn-secondary" id="manage-chapters">
+                            <i class="fas fa-cog"></i> Управление
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Уроки в <span id="current-chapter-name">Главе 1</span></label>
+                    <div id="lessons-list" class="lessons-list">
+                        <!-- Уроки будут добавляться динамически -->
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn btn-small" id="add-lesson-btn">
+                            <i class="fas fa-plus"></i> Добавить урок
+                        </button>
+                        <button class="btn btn-small btn-secondary" id="import-lessons">
+                            <i class="fas fa-file-import"></i> Импорт
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Особые функции</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enable-3d" checked>
+                        <label for="enable-3d">3D-эффект переворота страницы</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enable-progress" checked>
+                        <label for="enable-progress">Отслеживание прогресса</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enable-drag">
+                        <label for="enable-drag">Перетаскивание элементов</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enable-dark">
+                        <label for="enable-dark">Ночной режим</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <div class="sidebar-section">
+                <div class="section-title">
+                    <i class="fas fa-magic"></i> Интерактивные элементы
+                </div>
+                
+                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 15px;">
+                    Перетащите элемент в хендбук для добавления
+                </p>
+                
+                <div class="interactive-elements">
+                    <div class="interactive-element" data-type="quiz" draggable="true">
+                        <div class="element-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <div class="element-title">Тест</div>
+                        <div class="element-desc">Интерактивный тест с вопросами</div>
+                    </div>
+                    
+                    <div class="interactive-element" data-type="video" draggable="true">
+                        <div class="element-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="element-title">Видео</div>
+                        <div class="element-desc">Вставка видео-материалов</div>
+                    </div>
+                    
+                    
+                    <!-- Новый элемент для добавления файлов -->
+                    <div class="interactive-element" data-type="file" draggable="true">
+                        <div class="element-icon">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <div class="element-title">Файл</div>
+                        <div class="element-desc">Добавить файл для скачивания</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <button class="btn btn-full" id="export-btn">
+                <i class="fas fa-download"></i> Экспортировать хендбук
+            </button>
+            
+            <button class="btn btn-secondary btn-full" id="save-btn">
+                <i class="fas fa-save"></i> Сохранить проект
+            </button>
+            
+            <button class="btn btn-secondary btn-full" id="share-btn">
+                <i class="fas fa-share-alt"></i> Поделиться
+            </button>
+        </div>
+
+        <!-- Область предпросмотра -->
+        <div class="preview-area">
+            <div class="preview-header">
+                <div class="preview-title">Предпросмотр хендбука</div>
+                <div class="preview-controls">
+                    <div class="handbook-stats">
+                        <span id="chapters-count">0 глав</span>
+                        <span id="lessons-count">0 уроков</span>
+                        <span id="files-count">0 файлов</span>
+                    </div>
+                    <button class="btn" id="reset-btn">
+                        <i class="fas fa-redo"></i> Сбросить
+                    </button>
+                    <button class="btn btn-secondary" id="preview-toggle">
+                        <i class="fas fa-expand"></i> Полный экран
+                    </button>
+                    <button class="btn btn-secondary" id="toggle-editor">
+                        <i class="fas fa-edit"></i> Режим правки
+                    </button>
+                </div>
+            </div>
+
+            <!-- Хендбук -->
+            <div class="handbook-preview page-flip" id="handbook">
+                <div class="handbook-cover" id="handbook-cover">
+                    <div class="cover-pattern" id="cover-pattern"></div>
+                    <div class="cover-image" id="cover-image-container" style="display: none;"></div>
+                    <div class="cover-content">
+                        <h1 class="handbook-title" id="preview-title">Новый хендбук</h1>
+                        <div class="handbook-subtitle" id="preview-subtitle">Добавьте описание</div>
+                        <div class="handbook-author" id="preview-author"></div>
+                        <div class="handbook-date" id="preview-date"></div>
+                    </div>
+                </div>
+                
+                <div class="handbook-content" id="handbook-content">
+                    <div id="empty-state" class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <h3>Ваш хендбук пуст</h3>
+                        <p>Начните добавлять главы и уроки, чтобы создать свой учебный материал</p>
+                        <button class="btn" id="quick-start-btn">
+                            <i class="fas fa-bolt"></i> Быстрый старт
+                        </button>
+                    </div>
+                    
+                    <!-- Главы и уроки будут добавляться динамически -->
+                    <div id="content-container"></div>
+                    
+                    <!-- Место для интерактивных элементов -->
+                    <div id="interactive-container"></div>
+                    
+                    <!-- Секция с файлами -->
+                    <div id="files-section" class="files-section" style="display: none;">
+                        <div class="section-title">
+                            <i class="fas fa-paperclip"></i> Прикрепленные файлы
+                        </div>
+                        <div id="files-list" class="files-list">
+                            <!-- Файлы будут добавляться динамически -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="preview-hint">
+                <i class="fas fa-lightbulb"></i> Подсказка: Наведите курсор на обложку хендбука для 3D-эффекта
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно экспорта -->
+    <div class="modal" id="export-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Экспорт хендбука</div>
+                <div class="modal-close" id="close-modal">&times;</div>
+            </div>
+            <p style="margin-bottom: 20px;">Выберите формат для экспорта вашего хендбука:</p>
+            
+            <div class="export-options">
+                <button class="export-option" id="export-html">
+                    <div class="export-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="export-title">HTML файл</div>
+                    <div class="export-desc">Полная веб-страница</div>
+                </button>
+                
+                <button class="export-option" id="export-pdf">
+                    <div class="export-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div class="export-title">PDF документ</div>
+                    <div class="export-desc">Для печати и чтения</div>
+                </button>
+                
+                <button class="export-option" id="export-json">
+                    <div class="export-icon">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <div class="export-title">JSON проект</div>
+                    <div class="export-desc">Для дальнейшего редактирования</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно быстрого старта -->
+    <div class="modal" id="quickstart-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Быстрый старт</div>
+                <div class="modal-close" id="close-quickstart">&times;</div>
+            </div>
+            
+            <div class="quickstart-options">
+                <div class="quickstart-option" data-preset="programming">
+                    <div class="quickstart-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="quickstart-title">Программирование</div>
+                    <div class="quickstart-desc">Готовый план изучения веб-разработки</div>
+                </div>
+                
+                <div class="quickstart-option" data-preset="language">
+                    <div class="quickstart-icon">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <div class="quickstart-title">Иностранный язык</div>
+                    <div class="quickstart-desc">Структура для изучения языка</div>
+                </div>
+                
+                <div class="quickstart-option" data-preset="design">
+                    <div class="quickstart-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <div class="quickstart-title">Дизайн</div>
+                    <div class="quickstart-desc">Основы UI/UX дизайна</div>
+                </div>
+                
+                <div class="quickstart-option" data-preset="empty">
+                    <div class="quickstart-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="quickstart-title">Пустой шаблон</div>
+                    <div class="quickstart-desc">Начните с чистого листа</div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancel-quickstart">
+                    Отмена
+                </button>
+                <button class="btn" id="apply-quickstart">
+                    Применить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно добавления главы -->
+    <div class="modal" id="chapter-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Добавить главу</div>
+                <div class="modal-close" id="close-chapter-modal">&times;</div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Название главы</label>
+                <input type="text" id="chapter-name" placeholder="Введите название главы">
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Описание</label>
+                <textarea id="chapter-description" placeholder="Краткое описание главы" rows="3"></textarea>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Иконка главы</label>
+                <div class="icon-selector">
+                    <div class="icon-option active" data-icon="fa-book">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="icon-option" data-icon="fa-code">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="icon-option" data-icon="fa-chart-bar">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="icon-option" data-icon="fa-video">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div class="icon-option" data-icon="fa-tasks">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="icon-option" data-icon="fa-question-circle">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <div class="icon-option" data-icon="fa-file">
+                        <i class="fas fa-file"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancel-chapter">
+                    Отмена
+                </button>
+                <button class="btn" id="save-chapter">
+                    Добавить главу
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно добавления урока -->
+    <div class="modal" id="lesson-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Добавить урок</div>
+                <div class="modal-close" id="close-lesson-modal">&times;</div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Название урока</label>
+                <input type="text" id="lesson-name" placeholder="Введите название урока">
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Описание</label>
+                <textarea id="lesson-description" placeholder="Краткое описание урока" rows="3"></textarea>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Продолжительность</label>
+                <div class="duration-selector">
+                    <input type="number" id="lesson-duration" min="1" max="180" value="30">
+                    <span>минут</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Тип урока</label>
+                <div class="lesson-type-selector">
+                    <div class="type-option active" data-type="text">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Текст</span>
+                    </div>
+                    <div class="type-option" data-type="video">
+                        <i class="fas fa-video"></i>
+                        <span>Видео</span>
+                    </div>
+                    <div class="type-option" data-type="quiz">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Тест</span>
+                    </div>
+                    <div class="type-option" data-type="practice">
+                        <i class="fas fa-code"></i>
+                        <span>Практика</span>
+                    </div>
+                    <div class="type-option" data-type="file">
+                        <i class="fas fa-file-upload"></i>
+                        <span>Файл</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancel-lesson">
+                    Отмена
+                </button>
+                <button class="btn" id="save-lesson">
+                    Добавить урок
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно добавления файла -->
+    <div class="modal" id="file-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Добавить файл</div>
+                <div class="modal-close" id="close-file-modal">&times;</div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Название файла</label>
+                <input type="text" id="file-name" placeholder="Введите название файла">
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Описание</label>
+                <textarea id="file-description" placeholder="Краткое описание файла" rows="2"></textarea>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Выберите файл</label>
+                <div class="file-upload-area" id="file-upload-area">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">
+                        <span class="upload-title">Перетащите файл сюда</span>
+                        <span class="upload-subtitle">или нажмите для выбора</span>
+                    </div>
+                    <input type="file" id="file-input" class="file-input" multiple>
+                </div>
+                <div id="selected-files" class="selected-files">
+                    <!-- Выбранные файлы будут отображаться здесь -->
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Тип файла</label>
+                <div class="file-type-selector">
+                    <div class="file-type-option active" data-type="document">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>Документ</span>
+                    </div>
+                    <div class="file-type-option" data-type="archive">
+                        <i class="fas fa-file-archive"></i>
+                        <span>Архив</span>
+                    </div>
+                    <div class="file-type-option" data-type="image">
+                        <i class="fas fa-file-image"></i>
+                        <span>Изображение</span>
+                    </div>
+                    <div class="file-type-option" data-type="code">
+                        <i class="fas fa-file-code"></i>
+                        <span>Код</span>
+                    </div>
+                    <div class="file-type-option" data-type="other">
+                        <i class="fas fa-file"></i>
+                        <span>Другое</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancel-file">
+                    Отмена
+                </button>
+                <button class="btn" id="save-file">
+                    Добавить файл
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно управления файлами -->
+    <div class="modal" id="files-manager-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Управление файлами</div>
+                <div class="modal-close" id="close-files-manager">&times;</div>
+            </div>
+            
+            <div class="files-manager">
+                <div class="files-manager-header">
+                    <div class="files-count" id="total-files-count">Всего файлов: 0</div>
+                    <button class="btn btn-small" id="add-file-direct">
+                        <i class="fas fa-plus"></i> Добавить файл
+                    </button>
+                </div>
+                
+                <div class="files-manager-list" id="files-manager-list">
+                    <!-- Список файлов для управления -->
+                </div>
+                
+                <div class="files-manager-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Максимальный размер файла: 10MB. Поддерживаемые форматы: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, ZIP, RAR, JPG, PNG, GIF, MP3, MP4, TXT, JS, HTML, CSS</span>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn" id="close-files-manager-btn">
+                    Закрыть
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="quiz-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">Создание теста</div>
+            <div class="modal-close" id="close-quiz-modal">&times;</div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">Название теста</label>
+            <input type="text" id="quiz-title" placeholder="Введите название теста" value="Проверочный тест">
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">Описание теста</label>
+            <textarea id="quiz-description" placeholder="Опишите тест" rows="2">Проверьте свои знания</textarea>
+        </div>
+        
+        <div class="section-title" style="margin-top: 20px; margin-bottom: 15px;">
+            <i class="fas fa-question-circle"></i> Вопросы
+        </div>
+        
+        <div id="quiz-questions-container">
+            <!-- Вопросы будут добавляться динамически -->
+            <div class="quiz-question" data-question-index="0">
+                <div class="question-header">
+                    <div class="question-number">Вопрос 1</div>
+                    <button class="btn-icon delete-question" title="Удалить вопрос">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Текст вопроса</label>
+                    <input type="text" class="question-text" placeholder="Введите вопрос" value="Что означает аббревиатура HTML?">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Варианты ответов</label>
+                    <div class="answer-options">
+                        <div class="answer-option">
+                            <div class="answer-input-group">
+                                <input type="radio" name="question-0-correct" value="0" checked>
+                                <input type="text" class="answer-text" placeholder="Вариант ответа" value="Hyper Text Markup Language">
+                                <button class="btn-icon remove-answer" title="Удалить вариант">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="answer-option">
+                            <div class="answer-input-group">
+                                <input type="radio" name="question-0-correct" value="1">
+                                <input type="text" class="answer-text" placeholder="Вариант ответа" value="High Tech Modern Language">
+                                <button class="btn-icon remove-answer" title="Удалить вариант">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="answer-option">
+                            <div class="answer-input-group">
+                                <input type="radio" name="question-0-correct" value="2">
+                                <input type="text" class="answer-text" placeholder="Вариант ответа" value="Hyper Transfer Markup Language">
+                                <button class="btn-icon remove-answer" title="Удалить вариант">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-small add-answer" data-question-index="0">
+                        <i class="fas fa-plus"></i> Добавить вариант
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <button class="btn btn-secondary" id="add-question-btn">
+                <i class="fas fa-plus"></i> Добавить вопрос
+            </button>
+        </div>
+        
+        <div class="modal-actions">
+            <button class="btn btn-secondary" id="cancel-quiz">
+                Отмена
+            </button>
+            <button class="btn" id="save-quiz">
+                Сохранить тест
+            </button>
+        </div>
+    </div>
+</div>
+
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
